@@ -41,6 +41,36 @@ void MagicStop() {
   naturals.Cancel();
 }
 
+void MoveOnly() {
+  class MoveOnlyType {
+   public:
+    explicit MoveOnlyType(size_t value) : value_(value) {}
+
+    MoveOnlyType(const MoveOnlyType&) = delete;
+    MoveOnlyType& operator=(const MoveOnlyType&) = delete;
+
+    MoveOnlyType(MoveOnlyType&&) = default;
+    MoveOnlyType& operator=(MoveOnlyType&&) = default;
+
+    [[nodiscard]] size_t GetValue() const {
+      return value_;
+    }
+
+   private:
+    const size_t value_;
+  };
+
+  Generator<MoveOnlyType> naturals([]() {
+    for (size_t i = 0; i < 10; ++i) {
+      Generator<MoveOnlyType>::Yield(MoveOnlyType(i));
+    }
+  });
+
+  while (auto val = naturals.Get()) {
+    std::cout << val->GetValue() << std::endl;
+  }
+}
+
 int main() {
   MagicStop();
 }
