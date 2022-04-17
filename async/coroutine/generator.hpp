@@ -9,9 +9,6 @@
 
 namespace async::coroutine {
 
-class StopGenerating : public std::exception {
-};
-
 template<class T>
 class Generator {
  public:
