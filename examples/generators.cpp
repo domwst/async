@@ -61,7 +61,7 @@ void MoveOnly() {
     }
 
    private:
-    const size_t value_;
+    size_t value_;
   };
 
   Generator<MoveOnlyType> naturals([]() {
