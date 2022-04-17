@@ -24,11 +24,11 @@ class Generator {
     return {};
   }
 
-  static bool Yield(T value) {
+  static bool Yield(T /*value*/) {
     return true;
   }
 
-  static void Yield2(T value) {
+  static void Yield2(T /*value*/) {
   }
 
   void Cancel() {

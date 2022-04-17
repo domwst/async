@@ -15,6 +15,7 @@ void CoroutineImpl::Resume() {
 }
 
 void CoroutineImpl::Run() {
+    std::abort();
 }
 
 bool CoroutineImpl::IsFinished() const {
