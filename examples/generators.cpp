@@ -36,7 +36,11 @@ void MagicStop() {
     }
   });
   for (size_t i = 0; i < 10; ++i) {
-    std::cout << *naturals.Get() << std::endl;
+    auto val = naturals.Get();
+    if (!val) {
+      break;
+    }
+    std::cout << *val << std::endl;
   }
   naturals.Cancel();
 }
