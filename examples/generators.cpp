@@ -1,4 +1,5 @@
 #include <async/coroutine/generator.hpp>
+#include <async/util/defer.hpp>
 
 #include <iostream>
 
@@ -30,6 +31,9 @@ void Nested() {
 void MagicStop() {
   Generator<size_t> naturals([]() {
     size_t n = 0;
+    async::util::Defer scope_guard([]() {
+      std::cout << "Finished" << std::endl;
+    });
     while (true) {
       size_t val = n++;
       Generator<size_t>::Yield2(val * val);
@@ -43,6 +47,7 @@ void MagicStop() {
     std::cout << *val << std::endl;
   }
   naturals.Cancel();
+  // Should print "Finished"
 }
 
 void MoveOnly() {
