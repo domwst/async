@@ -31,4 +31,8 @@ void Coroutine::Suspend() {
   Self().impl_.Suspend();
 }
 
+bool Coroutine::IsFinished() const {
+  return impl_.IsFinished();
+}
+
 }

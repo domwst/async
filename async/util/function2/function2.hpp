@@ -1404,7 +1404,7 @@ struct use_bool_op : std::false_type {};
 #elif defined(FU2_HAS_LIMITED_EMPTY_PROPAGATION)
 /// Implementation for use_bool_op based on the behaviour of std::function,
 /// propagating empty state for pointers, `std::function` and
-/// `fu2::detail::function` types only.
+/// `fu2::impl::function` types only.
 template <typename T>
 struct use_bool_op : std::false_type {};
 
@@ -1699,7 +1699,7 @@ bool operator!=(std::nullptr_t, function<Config, Property> const& f) {
 
 // Default intended object size of the function
 using object_size = std::integral_constant<std::size_t, 32U>;
-} // namespace detail
+} // namespace impl
 } // namespace abi_400
 
 /// Can be passed to function_base as template argument which causes

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <async/coroutine/coroutine_impl.hpp>
+#include <async/coroutine/impl/coroutine.hpp>
 #include <async/util/memory/stack.hpp>
 #include <async/util/defer.hpp>
 
@@ -12,9 +12,9 @@ namespace async::coroutine {
 template<class T>
 class Processor {
  public:
-  using Routine = detail::CoroutineImpl::Routine;
+  using Routine = impl::Coroutine::Routine;
 
-  explicit Processor(Routine /*routine*/, size_t /*stack_pages*/ = 8){
+  explicit Processor(Routine routine, size_t stack_pages = 8){
   }
 
   // Context: Coroutine
@@ -32,6 +32,12 @@ class Processor {
 
   void Close() {
   }
+
+ private:
+  static std::optional<T> value_;
 };
+
+template<class T>
+std::optional<T> Processor<T>::value_{};
 
 }  // namespace async::coroutine

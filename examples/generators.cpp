@@ -4,14 +4,15 @@
 #include <iostream>
 
 using async::coroutine::Generator;
+using async::util::Defer;
 
 void Simple() {
   Generator<size_t> naturals([]() {
     size_t n = 0;
-    async::util::Defer scope_guard([]() {
+    Defer scope_guard([]() {
       std::cout << "Generator finished" << std::endl;
     });
-    while (Generator<size_t>::Yield(n++)) {}
+    while (Generator<size_t>::YieldNoThrow(n++)) {}
   });
 
   for (size_t i = 0; i < 10; ++i) {
@@ -25,7 +26,7 @@ void Nested() {
   Generator<size_t> ten_squares([]() {
     Generator<size_t> naturals([]() {
       size_t n = 0;
-      while (Generator<size_t>::Yield(n++)) {
+      while (Generator<size_t>::YieldNoThrow(n++)) {
       }
     });
 
@@ -34,7 +35,7 @@ void Nested() {
       if (!val) {
         return;
       }
-      if (!Generator<size_t>::Yield((*val) * (*val))) {
+      if (!Generator<size_t>::YieldNoThrow((*val) * (*val))) {
         break;
       }
     }
@@ -45,25 +46,53 @@ void Nested() {
 }
 
 void MagicStop() {
-  Generator<size_t> naturals([]() {
+  Generator<size_t> squares([]() {
     size_t n = 0;
-    async::util::Defer scope_guard([]() {
+    Defer scope_guard([]() {
       std::cout << "Generator finished" << std::endl;
     });
     while (true) {
       size_t val = n++;
-      Generator<size_t>::Yield2(val * val);
+      Generator<size_t>::Yield(val * val);
     }
   });
   for (size_t i = 0; i < 10; ++i) {
-    auto val = naturals.Get();
+    auto val = squares.Get();
     if (!val) {
       break;
     }
     std::cout << *val << std::endl;
   }
-  naturals.Cancel();  // Should print "Generator finished" before "Test finished"
+  squares.Cancel();  // Should print "Generator finished" before "Test finished"
   std::cout << "Test finished" << std::endl;
+}
+
+void CancellationPropagation() {
+  Generator<size_t> squares([]() {
+    Defer scope_guard([]() {
+      std::cout << "Squares generator scope finished" << std::endl;
+    });
+
+    Generator<size_t> naturals([]() {
+      Defer scope_guard([]() {
+        std::cout << "Naturals generator scope finished" << std::endl;
+      });
+
+      size_t n = 0;
+      while (true) {
+        Generator<size_t>::Yield(n++);
+      }
+    });
+
+    while (true) {
+      auto n = *naturals.Get();
+      Generator<size_t>::Yield(n * n);
+    }
+  });
+
+  for (size_t i = 0; i < 10; ++i) {
+    std::cout << *squares.Get() << std::endl;
+  }
 }
 
 void MoveOnly() {
@@ -97,5 +126,5 @@ void MoveOnly() {
 }
 
 int main() {
-  MagicStop();
+  CancellationPropagation();
 }
