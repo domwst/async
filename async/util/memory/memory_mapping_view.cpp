@@ -6,17 +6,22 @@
 
 namespace async::util {
 
-MemoryMappingView::MemoryMappingView() noexcept : MemoryMappingView(nullptr, 0) {
+MemoryMappingView::MemoryMappingView() noexcept
+    : MemoryMappingView(nullptr, 0) {
 }
 
-MemoryMappingView::MemoryMappingView(char* start, size_t size) noexcept : start_(start), size_(size) {
+MemoryMappingView::MemoryMappingView(char* start, size_t size) noexcept
+    : start_(start),
+      size_(size) {
 }
 
-MemoryMappingView::MemoryMappingView(MemoryMappingView&& other) noexcept : MemoryMappingView() {
+MemoryMappingView::MemoryMappingView(MemoryMappingView&& other) noexcept
+    : MemoryMappingView() {
   Swap(other);
 }
 
-MemoryMappingView& MemoryMappingView::operator=(MemoryMappingView&& other) noexcept {
+MemoryMappingView& MemoryMappingView::operator=(
+    MemoryMappingView&& other) noexcept {
   MemoryMappingView tmp(std::move(other));
   Swap(tmp);
   return *this;
@@ -27,7 +32,7 @@ void MemoryMappingView::Swap(MemoryMappingView& other) noexcept {
   std::swap(size_, other.size_);
 }
 
-const size_t MemoryMappingView::PageSize = sysconf(_SC_PAGESIZE);
+const size_t MemoryMappingView::kPageSize = sysconf(_SC_PAGESIZE);
 
 char* MemoryMappingView::Begin() const noexcept {
   return start_;
@@ -45,4 +50,4 @@ size_t MemoryMappingView::Size() const noexcept {
   return size_;
 }
 
-}  // async::util
+}  // namespace async::util

@@ -12,13 +12,15 @@ void Simple() {
     Defer scope_guard([]() {
       std::cout << "Generator finished" << std::endl;
     });
-    while (Generator<size_t>::YieldNoThrow(n++)) {}
+    while (Generator<size_t>::YieldNoThrow(n++)) {
+    }
   });
 
   for (size_t i = 0; i < 10; ++i) {
     naturals.Get();
   }
-  naturals.Cancel();  // Should print "Generator finished" before "Test finished"
+  naturals
+      .Cancel();  // Should print "Generator finished" before "Test finished"
   std::cout << "Test finished" << std::endl;
 }
 
@@ -98,7 +100,9 @@ void CancellationPropagation() {
 void MoveOnly() {
   class MoveOnlyType {
    public:
-    explicit MoveOnlyType(size_t value) : value_(value) {}
+    explicit MoveOnlyType(size_t value)
+        : value_(value) {
+    }
 
     MoveOnlyType(const MoveOnlyType&) = delete;
     MoveOnlyType& operator=(const MoveOnlyType&) = delete;

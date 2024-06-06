@@ -28,7 +28,7 @@ class MemoryMappingView {
 
   [[nodiscard]] size_t Size() const noexcept;
 
-  static const size_t PageSize;
+  static const size_t kPageSize;
 
  private:
   char* start_;

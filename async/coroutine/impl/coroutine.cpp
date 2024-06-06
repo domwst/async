@@ -1,11 +1,10 @@
 #include "coroutine.hpp"
 
-
 namespace async::coroutine::impl {
 
 Coroutine::Coroutine(Coroutine::Routine routine, util::MemoryMappingView stack)
-  : stack_(std::move(stack)), routine_(std::move(routine)) {
-
+    : stack_(std::move(stack)),
+      routine_(std::move(routine)) {
   callee_.Setup(stack_, this);
 }
 

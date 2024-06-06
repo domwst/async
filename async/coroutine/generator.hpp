@@ -9,17 +9,16 @@
 
 namespace async::coroutine {
 
-struct GeneratorCanceled : std::exception {
-};
+struct GeneratorCanceled : std::exception {};
 
-template<class T>
+template <class T>
 class Generator {
  public:
   using Routine = impl::Coroutine::Routine;
 
   explicit Generator(Routine routine, size_t stack_pages = 8)
-    : stack_(util::Stack::AllocateStack(stack_pages)),
-      impl_(std::move(routine), stack_.View()) {
+      : stack_(util::Stack::AllocateStack(stack_pages)),
+        impl_(std::move(routine), stack_.View()) {
   }
 
   std::optional<T> Get() {
@@ -78,7 +77,7 @@ class Generator {
   std::optional<T> value_;
 };
 
-template<class T>
+template <class T>
 Generator<T>* Generator<T>::current_ = nullptr;
 
 }  // namespace async::coroutine

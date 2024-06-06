@@ -19,7 +19,8 @@ class MemoryMapping : public MemoryMappingView {
 
   ~MemoryMapping();
 
-  void ProtectPages(size_t first_page, size_t pages, int flags = PROT_NONE) noexcept;
+  void ProtectPages(size_t first_page, size_t pages,
+                    int flags = PROT_NONE) noexcept;
 
   [[nodiscard]] static MemoryMapping AllocatePages(size_t pages) noexcept;
 

@@ -8,10 +8,10 @@ namespace async::coroutine {
 class Coroutine {
  public:
   class SuspendHandle {
-  public:
+   public:
     void Suspend();
 
-  private:
+   private:
     friend Coroutine;
 
     explicit SuspendHandle(Coroutine&);
@@ -34,4 +34,4 @@ class Coroutine {
   impl::Coroutine impl_;
 };
 
-}
+}  // namespace async::coroutine

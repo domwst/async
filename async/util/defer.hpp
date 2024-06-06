@@ -4,10 +4,11 @@
 
 namespace async::util {
 
-template<class TFunction>
+template <class TFunction>
 class Defer {
  public:
-  explicit Defer(TFunction function) : function_(std::move(function)) {
+  explicit Defer(TFunction function)
+      : function_(std::move(function)) {
   }
 
   ~Defer() {

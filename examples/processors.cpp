@@ -5,7 +5,7 @@
 using async::coroutine::Processor;
 
 void Nested() {
-  constexpr size_t n = 10;
+  constexpr size_t kN = 10;
   Processor<size_t> sq_printer([]() {
     Processor<size_t> printer([]() {
       while (auto val = Processor<size_t>::Receive()) {
@@ -18,7 +18,7 @@ void Nested() {
     }
   });
 
-  for (size_t i = 0; i < n; ++i) {
+  for (size_t i = 0; i < kN; ++i) {
     sq_printer.Send(i);
   }
 }
@@ -26,7 +26,9 @@ void Nested() {
 void MoveOnly() {
   class MoveOnlyType {
    public:
-    explicit MoveOnlyType(size_t value) : value_(value) {}
+    explicit MoveOnlyType(size_t value)
+        : value_(value) {
+    }
 
     MoveOnlyType(const MoveOnlyType&) = delete;
     MoveOnlyType& operator=(const MoveOnlyType&) = delete;

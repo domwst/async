@@ -9,15 +9,15 @@
 
 namespace async::coroutine {
 
-template<class T>
+template <class T>
 class Processor {
  public:
   using Routine = impl::Coroutine::Routine;
 
-  explicit Processor(Routine routine, size_t stack_pages = 8){
+  explicit Processor(Routine /* routine */, size_t /* stack_pages */ = 8) {
   }
 
-  // Context: Coroutine
+  // Context: Processor
   static std::optional<T> Receive() {
     return {};
   }
@@ -34,10 +34,7 @@ class Processor {
   }
 
  private:
-  static std::optional<T> value_;
+  std::optional<T> value_;
 };
-
-template<class T>
-std::optional<T> Processor<T>::value_{};
 
 }  // namespace async::coroutine

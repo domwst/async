@@ -13,7 +13,7 @@ class MachineContext {
   void SwitchTo(MachineContext& context);
 
  private:
-  void* rsp{nullptr};
+  void* rsp_{nullptr};
 };
 
 }  // namespace async::util

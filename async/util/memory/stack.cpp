@@ -10,7 +10,8 @@ Stack Stack::AllocateStack(size_t pages) noexcept {
   return Stack(std::move(memory));
 }
 
-Stack::Stack(MemoryMapping memory) noexcept: memory_(std::move(memory)) {
+Stack::Stack(MemoryMapping memory) noexcept
+    : memory_(std::move(memory)) {
 }
 
 MemoryMappingView Stack::View() const noexcept {
@@ -18,7 +19,7 @@ MemoryMappingView Stack::View() const noexcept {
 }
 
 size_t Stack::Size() const noexcept {
-  return memory_.Size() - MemoryMapping::PageSize;
+  return memory_.Size() - MemoryMapping::kPageSize;
 }
 
 }  // namespace async::util

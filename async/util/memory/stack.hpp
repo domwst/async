@@ -22,7 +22,6 @@ class Stack {
   static Stack AllocateStack(size_t pages) noexcept;
 
  private:
-
   async::util::MemoryMapping memory_;
 };
 
