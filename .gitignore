@@ -169,3 +169,6 @@ _deps
 
 .idea/vcs.xml
 build/
+
+# Clangd
+.cache/clangd
