@@ -2,7 +2,7 @@
 
 namespace async::util {
 
-class ISpringBoard {
+class ITrampoline {
  public:
   [[noreturn]] virtual void Run() = 0;
 };

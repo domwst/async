@@ -3,13 +3,13 @@
 #include <functional>
 #include <exception>
 
-#include "async/util/context/machine_context.hpp"
-#include "async/util/memory/memory_mapping_view.hpp"
-#include "async/util/unique_function.hpp"
+#include <async/util/context/machine_context.hpp>
+#include <async/util/memory/memory_mapping_view.hpp>
+#include <async/util/unique_function.hpp>
 
 namespace async::coroutine::impl {
 
-class Coroutine : public util::ISpringBoard {
+class Coroutine : public util::ITrampoline {
  public:
   using Routine = UniqueFunction<void()>;
 
@@ -29,7 +29,7 @@ class Coroutine : public util::ISpringBoard {
   util::MemoryMappingView stack_;
 
   // Because of the implementation, one MachineContext can be used
-  // Two MachineContext's here just for better readability
+  // Two MachineContext's are here just for better readability
   util::MachineContext caller_;
   util::MachineContext callee_;
 

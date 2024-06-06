@@ -24,7 +24,7 @@ retq
 
 
 .global SetupMachineContext
-SetupMachineContext:  # SetupMachineContext(void** stack_bottom, SpringboardFunction, void* SpringboardArg)
+SetupMachineContext:  # SetupMachineContext(void** stack_bottom, TrampolineFunction, void* TrampolineArg)
 
 movq %rsp, %rax
 movq (%rdi), %rsp
