@@ -1,41 +1,42 @@
 #pragma once
 
-#include <functional>
-#include <exception>
-
 #include <async/util/context/machine_context.hpp>
 #include <async/util/memory/memory_mapping_view.hpp>
-#include <async/util/unique_function.hpp>
 
 namespace async::coroutine::impl {
 
-class Coroutine : public util::ITrampoline {
+class Coroutine {
  public:
-  using Routine = UniqueFunction<void()>;
+  template <class F>
+  Coroutine(F routine, util::MemoryMappingView stack) {
+    struct Runnable {
+      F routine_;
+      Coroutine& self_;
 
-  Coroutine(Routine routine, util::MemoryMappingView stack);
+      [[noreturn]] void Run() {
+        routine_();
+        routine_.~F();
+        self_.is_finished_ = true;
+        self_.suspended_.ExitWith(nullptr);
+      }
+    };
+
+    suspended_.Setup(stack.AsBytes(), Runnable{std::move(routine), *this});
+  }
 
   // Context: Coroutine
-  void Suspend();
+  void* Suspend(void* payloat);
 
   // Context: Caller
-  void Resume();
+  void* Resume(void* payload);
 
   [[nodiscard]] bool IsFinished() const;
 
  private:
-  [[noreturn]] void Run() override;
-
   util::MemoryMappingView stack_;
+  util::MachineContext suspended_;
 
-  // Because of the implementation, one MachineContext can be used
-  // Two MachineContext's are here just for better readability
-  util::MachineContext caller_;
-  util::MachineContext callee_;
-
-  Routine routine_;
   bool is_finished_ = false;
-  std::exception_ptr exception_;
 };
 
 }  // namespace async::coroutine::impl

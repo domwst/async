@@ -50,4 +50,9 @@ size_t MemoryMappingView::Size() const noexcept {
   return size_;
 }
 
+std::span<std::byte> MemoryMappingView::AsBytes() const noexcept {
+  return {reinterpret_cast<std::byte*>(Begin()),
+          reinterpret_cast<std::byte*>(End())};
+}
+
 }  // namespace async::util

@@ -14,16 +14,25 @@ struct GeneratorCanceled : std::exception {};
 template <class T>
 class Generator {
  public:
-  using Routine = impl::Coroutine::Routine;
-
-  explicit Generator(Routine routine, size_t stack_pages = 8)
+  template <class F>
+  explicit Generator(F routine, size_t stack_pages = 8)
       : stack_(util::Stack::AllocateStack(stack_pages)),
-        impl_(std::move(routine), stack_.View()) {
+        impl_(
+            [r = std::move(routine)] {
+              try {
+                r();
+              } catch (GeneratorCanceled&) {
+              }
+            },
+            stack_.View()) {
   }
 
   std::optional<T> Get() {
-    ResumeImpl();
-    return std::move(value_);
+    void* payload = ResumeImpl();
+    if (payload == nullptr) {
+      return std::nullopt;
+    }
+    return std::move(*static_cast<T*>(payload));
   }
 
   void Cancel() {
@@ -34,9 +43,9 @@ class Generator {
 
   //  Returns false if generator should stop
   static bool YieldNoThrow(T value) {
-    Self().value_ = std::move(value);
-    Self().impl_.Suspend();
-    return !Self().is_canceled_;
+    auto& self = Self();
+    self.impl_.Suspend(&value);
+    return !self.is_canceled_;
   }
 
   static void Yield(T value) {
@@ -52,32 +61,32 @@ class Generator {
   }
 
  private:
-  void ResumeImpl() {
-    auto prev = std::exchange(current_, this);
+  void* ResumeImpl() {
+    auto prev = std::exchange(current, this);
     util::Defer rollback([prev]() {
-      current_ = prev;
+      current = prev;
     });
 
     try {
-      impl_.Resume();
+      return impl_.Resume(nullptr);
     } catch (GeneratorCanceled&) {
     }
+    return nullptr;
   }
 
   static Generator& Self() {
-    assert(current_ != nullptr);
-    return *current_;
+    assert(current != nullptr);
+    return *current;
   }
 
-  static Generator* current_;
+  static Generator* current;
 
   util::Stack stack_;
   impl::Coroutine impl_;
   bool is_canceled_{false};
-  std::optional<T> value_;
 };
 
 template <class T>
-Generator<T>* Generator<T>::current_ = nullptr;
+Generator<T>* Generator<T>::current = nullptr;
 
 }  // namespace async::coroutine

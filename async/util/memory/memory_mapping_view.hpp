@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <span>
 
 namespace async::util {
 
@@ -27,6 +28,8 @@ class MemoryMappingView {
   [[nodiscard]] char* Data() const noexcept;
 
   [[nodiscard]] size_t Size() const noexcept;
+
+  std::span<std::byte> AsBytes() const noexcept;
 
   static const size_t kPageSize;
 

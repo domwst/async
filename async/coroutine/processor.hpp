@@ -12,8 +12,7 @@ namespace async::coroutine {
 template <class T>
 class Processor {
  public:
-  using Routine = impl::Coroutine::Routine;
-
+  template <class Routine>
   explicit Processor(Routine /* routine */, size_t /* stack_pages */ = 8) {
   }
 

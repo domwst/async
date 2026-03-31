@@ -1,6 +1,7 @@
 #pragma once
 
-#include <async/coroutine/impl/coroutine.hpp>
+#include "impl/coroutine.hpp"
+
 #include <async/util/memory/stack.hpp>
 
 namespace async::coroutine {
@@ -9,7 +10,7 @@ class Coroutine {
  public:
   class SuspendHandle {
    public:
-    void Suspend();
+    void* Suspend(void* payload);
 
    private:
     friend Coroutine;
@@ -19,16 +20,22 @@ class Coroutine {
     Coroutine& self_;
   };
 
-  using Routine = fu2::function<void(SuspendHandle)>;
+  template <class F>
+  explicit Coroutine(F routine, size_t stack_pages = 8)
+      : stack_(util::Stack::AllocateStack(stack_pages)),
+        impl_(
+            [this, r = std::move(routine)] {
+              r(SuspendHandle{*this});
+            },
+            stack_.View()) {
+  }
 
-  explicit Coroutine(Routine routine, size_t stack_pages = 8);
-
-  void Resume();
+  void* Resume(void* payload);
 
   [[nodiscard]] bool IsFinished() const;
 
  private:
-  void Suspend();
+  void* Suspend(void* payload);
 
   util::Stack stack_;
   impl::Coroutine impl_;

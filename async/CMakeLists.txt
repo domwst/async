@@ -1,14 +1,9 @@
 cmake_minimum_required(VERSION 3.5)
 
 get_filename_component(LIB_INCLUDE_PATH ".." ABSOLUTE)
-get_filename_component(LIB_PATH "." ABSOLUTE)
 
-file(GLOB_RECURSE LIB_CXX_SOURCES ${LIB_PATH}/*.cpp)
-file(GLOB_RECURSE LIB_ASM_SOURCES ${LIB_PATH}/*.S)
-file(GLOB_RECURSE LIB_HEADERS ${LIB_PATH}/*.hpp)
+file(GLOB_RECURSE LIB_CXX_SOURCES CONFIGURE_DEPENDS *.cpp)
 
-enable_language(ASM)
-
-add_library(async STATIC ${LIB_CXX_SOURCES} ${LIB_ASM_SOURCES} ${LIB_HEADERS})
+add_library(async STATIC ${LIB_CXX_SOURCES} ${LIB_ASM_SOURCES})
 target_include_directories(async PUBLIC ${LIB_INCLUDE_PATH})
-target_link_libraries(async PUBLIC pthread)
+target_compile_options(async PUBLIC -masm=intel)
