@@ -31,10 +31,11 @@ MemoryMapping::~MemoryMapping() {
   }
 }
 
-void MemoryMapping::ProtectPages(size_t first_page, size_t pages,
-                                 int flags) noexcept {
-  assert(mprotect(Data() + first_page * kPageSize, pages * kPageSize, flags) ==
-         0);
+void MemoryMapping::ProtectPages(size_t first_page, size_t pages) noexcept {
+  auto ret =
+      mprotect(Data() + first_page * kPageSize, pages * kPageSize, PROT_NONE);
+  assert(ret == 0);
+  (void)ret;
 }
 
 MemoryMapping MemoryMapping::AllocatePages(size_t pages) noexcept {
