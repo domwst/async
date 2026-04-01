@@ -18,7 +18,7 @@ class Generator {
   explicit Generator(F routine, size_t stack_pages = 8)
       : stack_(util::Stack::AllocateStack(stack_pages)),
         impl_(
-            [r = std::move(routine)] {
+            [r = std::move(routine)](void*) {
               try {
                 r();
               } catch (GeneratorCanceled&) {

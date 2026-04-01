@@ -8,8 +8,8 @@
 namespace async::util::detail {
 
 template <Runnable R>
-void Trampoline(void*, void*, void*, void*, void*, void*, R runnable) {
-  runnable.Run();
+void Trampoline(void*, void* payload, void*, void*, void*, void*, R runnable) {
+  runnable.Run(payload);
 }
 
 #pragma pack(push, 8)
@@ -29,12 +29,10 @@ void* SetupMachineContext(std::span<std::byte> stack, R runnable) {
   assert(top % kStackAlignment == 0);
 
   top -= sizeof(R);
-  top &= ~(alignof(StackTop<R>) - 1) & -kStackAlignment;
+  top &= -alignof(R) & -kStackAlignment;
   top -= 24;
   // top -= offsetof(StackTop<R>, runnable);
 
-  // I don't even begin to think what happens to R's move
-  // constructor when the target is not aligned.
   return new (reinterpret_cast<void*>(top)) StackTop<R>{
       .rbp = nullptr,
       .trampoline = reinterpret_cast<void*>(Trampoline<R>),

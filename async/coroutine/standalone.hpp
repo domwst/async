@@ -24,7 +24,7 @@ class Coroutine {
   explicit Coroutine(F routine, size_t stack_pages = 8)
       : stack_(util::Stack::AllocateStack(stack_pages)),
         impl_(
-            [this, r = std::move(routine)] {
+            [this, r = std::move(routine)](void*) {
               r(SuspendHandle{*this});
             },
             stack_.View()) {

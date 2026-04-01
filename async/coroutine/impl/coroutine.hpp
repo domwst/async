@@ -13,8 +13,8 @@ class Coroutine {
       F routine_;
       Coroutine& self_;
 
-      [[noreturn]] void Run() {
-        routine_();
+      [[noreturn]] void Run(void* payload) {
+        routine_(payload);
         routine_.~F();
         self_.is_finished_ = true;
         self_.suspended_.ExitWith(nullptr);
